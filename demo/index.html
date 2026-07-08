@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BidMatrix Demo Package — RFP FN2024-17 (City of South Miami, Janitorial Services)</title>
+<meta name="description" content="A complete BidMatrix compliance matrix, annotated outline, and red-team scorecard built from a real, closed, public government RFP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF7F2; --paper-2:#F3EEE5; --ink:#1B2A41; --ink-2:#44536B; --ink-3:#7A8699;
+  --stamp:#B3362B; --stamp-soft:#F4E3E0; --pass:#2E6B4F; --pass-soft:#E3EEE8;
+  --line:#D9D2C4; --gold:#8A6D2F; --gold-soft:#F1E9D7;
+  --mono:'IBM Plex Mono',monospace; --serif:'IBM Plex Serif',Georgia,serif; --sans:'IBM Plex Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:var(--ink);text-decoration-color:var(--stamp);text-underline-offset:3px}
+a:hover{color:var(--stamp)}
+
+/* masthead */
+header.mast{border-bottom:3px double var(--ink);background:var(--paper)}
+.mast-inner{display:flex;justify-content:space-between;align-items:baseline;padding:18px 0;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--serif);font-weight:700;font-size:1.25rem;letter-spacing:.02em}
+.brand .bx{color:var(--stamp)}
+.mast-meta{font-family:var(--mono);font-size:.75rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}
+
+/* document header */
+.dochead{padding:56px 0 40px;border-bottom:1px solid var(--line)}
+.doc-kicker{font-family:var(--mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:14px}
+h1{font-family:var(--serif);font-size:clamp(1.7rem,4.5vw,2.6rem);line-height:1.15;font-weight:700;max-width:20ch}
+.doc-sub{margin-top:18px;max-width:64ch;color:var(--ink-2);font-size:1.05rem}
+.stamp{display:inline-block;margin-top:22px;padding:7px 14px;border:2px solid var(--stamp);color:var(--stamp);font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;transform:rotate(-1.2deg);background:var(--paper)}
+.src-table{margin-top:28px;border:1px solid var(--line);background:#fff}
+.src-table caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:10px 14px;border:1px solid var(--line);border-bottom:none;background:var(--paper-2)}
+.src-table table{width:100%;border-collapse:collapse;font-size:.85rem}
+.src-table td{padding:8px 14px;border-top:1px solid var(--line);vertical-align:top}
+.src-table td:first-child{font-family:var(--mono);font-size:.78rem;white-space:nowrap;color:var(--ink-2)}
+
+/* nav */
+nav.toc{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(27,42,65,.04)}
+.toc-inner{display:flex;gap:4px;overflow-x:auto;padding:10px 0}
+.toc a{flex:none;font-family:var(--mono);font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;padding:7px 13px;border:1px solid transparent;color:var(--ink-2)}
+.toc a:hover{border-color:var(--line);background:#fff;color:var(--ink)}
+.toc a .n{color:var(--stamp);margin-right:6px}
+
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+.sec-kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:10px}
+h2{font-family:var(--serif);font-size:clamp(1.35rem,3vw,1.9rem);font-weight:700;margin-bottom:14px}
+h3{font-family:var(--serif);font-size:1.12rem;font-weight:600;margin:30px 0 10px}
+p.lede{max-width:66ch;color:var(--ink-2)}
+p{max-width:72ch}
+
+/* traps */
+.traps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:26px}
+.trap{background:#fff;border:1px solid var(--line);border-top:3px solid var(--stamp);padding:18px}
+.trap h4{font-family:var(--serif);font-size:1rem;margin-bottom:8px}
+.trap .cite{font-family:var(--mono);font-size:.72rem;color:var(--ink-3);display:block;margin-bottom:8px}
+.trap p{font-size:.88rem;color:var(--ink-2)}
+.trap .resolve{margin-top:10px;font-size:.85rem;color:var(--pass);font-weight:600}
+
+/* matrix */
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 14px;align-items:center}
+.chip{font-family:var(--mono);font-size:.73rem;letter-spacing:.04em;padding:6px 12px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink-2);transition:all .15s}
+.chip:hover{border-color:var(--ink-2)}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.controls input{font-family:var(--mono);font-size:.8rem;padding:7px 12px;border:1px solid var(--line);background:#fff;color:var(--ink);min-width:180px}
+.controls input:focus{outline:2px solid var(--ink);outline-offset:-1px}
+.count{font-family:var(--mono);font-size:.75rem;color:var(--ink-3);margin-left:auto}
+.mtx-wrap{overflow-x:auto;border:1px solid var(--line);background:#fff}
+table.mtx{width:100%;border-collapse:collapse;font-size:.84rem;min-width:840px}
+.mtx thead th{font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;text-align:left;color:var(--ink-3);background:var(--paper-2);padding:10px 12px;border-bottom:2px solid var(--ink);position:sticky;top:0}
+.mtx td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.mtx tbody tr:hover{background:var(--gold-soft)}
+.rid{font-family:var(--mono);font-size:.76rem;white-space:nowrap;color:var(--ink-2)}
+.cite2{font-family:var(--mono);font-size:.72rem;white-space:nowrap;color:var(--ink-3)}
+.own{font-size:.76rem;white-space:nowrap;color:var(--ink-2)}
+td.req{min-width:320px}
+.tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;padding:2px 7px;border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+tr.conflict td{background:var(--stamp-soft)}
+tr.conflict:hover td{background:#EED6D2}
+tr.conflict .tag{border-color:var(--stamp);color:var(--stamp);font-weight:600}
+.mtx-foot{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);padding:12px 2px}
+
+/* outline */
+.outline{counter-reset:tab;margin-top:24px;display:grid;gap:12px}
+.tabcard{background:#fff;border:1px solid var(--line);padding:20px 22px;position:relative}
+.tabcard::before{counter-increment:tab;content:"TAB " counter(tab);position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;color:var(--ink-3)}
+.tabcard h4{font-family:var(--serif);font-size:1.05rem;margin-bottom:6px;max-width:80%}
+.tabcard .meta{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:.72rem;color:var(--ink-2);margin:8px 0 10px}
+.tabcard .meta b{color:var(--stamp);font-weight:600}
+.tabcard p{font-size:.9rem;color:var(--ink-2)}
+.tabcard .takeaway{margin-top:10px;padding:10px 14px;background:var(--paper-2);border-left:3px solid var(--gold);font-size:.88rem;font-style:italic;color:var(--ink)}
+
+/* scorecard */
+.dq{margin-top:20px;border:1px solid var(--line);background:#fff}
+.dq-row{display:grid;grid-template-columns:110px 1fr;border-bottom:1px solid var(--line)}
+.dq-row:last-child{border-bottom:none}
+.dq-verdict{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;display:flex;align-items:center;justify-content:center;padding:12px}
+.dq-verdict.pass{background:var(--pass-soft);color:var(--pass);font-weight:600}
+.dq-verdict.act{background:var(--gold-soft);color:var(--gold);font-weight:600}
+.dq-body{padding:12px 16px;font-size:.88rem;color:var(--ink-2)}
+.dq-body b{color:var(--ink)}
+
+.evals{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+.eval{background:#fff;border:1px solid var(--line);padding:18px}
+.eval h4{font-family:var(--serif);font-size:1rem;margin-bottom:6px}
+.eval .who{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stamp);margin-bottom:8px}
+.eval p{font-size:.86rem;color:var(--ink-2)}
+
+.deduction{background:#fff;border:1px solid var(--line);border-left:4px solid var(--stamp);padding:16px 20px;margin-top:14px;font-size:.9rem}
+.deduction .dhead{font-family:var(--mono);font-size:.78rem;color:var(--stamp);font-weight:600;margin-bottom:6px}
+.deduction p{color:var(--ink-2);font-size:.88rem}
+.deduction .fix{margin-top:8px;color:var(--pass);font-weight:600;font-size:.87rem}
+.deduction .flag{font-family:var(--mono);font-size:.76rem;background:var(--gold-soft);padding:2px 6px}
+
+/* chart */
+.figure{background:#fff;border:1px solid var(--line);padding:26px 26px 18px;margin-top:26px}
+.figure h4{font-family:var(--serif);font-size:1.05rem;margin-bottom:2px}
+.figure .fig-sub{font-size:.84rem;color:var(--ink-3);margin-bottom:18px}
+.chart{position:relative}
+.bar-row{display:grid;grid-template-columns:110px 1fr 52px;align-items:center;gap:10px;height:22px;margin-bottom:3px;position:relative}
+.bar-label{font-family:var(--mono);font-size:.7rem;color:var(--ink-2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{position:relative;height:14px}
+.bar{position:absolute;left:0;top:0;height:14px;background:var(--ink);border-radius:0 3px 3px 0;transition:opacity .15s;cursor:default}
+.bar.dim{background:#9FA8B8}
+.bar-row:hover .bar{opacity:.75}
+.bar-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-2)}
+.cutline{position:absolute;left:calc(110px + 10px);right:62px;pointer-events:none}
+.fig-note{font-size:.8rem;color:var(--ink-3);margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.dq-zero{font-family:var(--mono);font-size:.72rem;color:var(--stamp);font-weight:600}
+.chart-tip{position:fixed;z-index:99;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:.72rem;padding:6px 10px;pointer-events:none;display:none;max-width:260px}
+
+.callout{margin-top:26px;background:var(--paper-2);border:1px solid var(--line);padding:22px 24px}
+.callout h4{font-family:var(--serif);margin-bottom:8px}
+.callout p{font-size:.92rem;color:var(--ink-2)}
+
+/* CTA + footer */
+.cta{background:var(--ink);color:var(--paper);padding:56px 0}
+.cta h2{color:var(--paper)}
+.cta p{color:#C6CEDC}
+.cta a.btn{display:inline-block;margin-top:20px;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:14px 26px;text-decoration:none;font-weight:600;transition:transform .12s}
+.cta a.btn:hover{transform:translateY(-2px);color:var(--stamp)}
+footer{padding:34px 0 60px;font-size:.8rem;color:var(--ink-3)}
+footer p{max-width:none;margin-bottom:8px}
+@media(max-width:640px){
+  .bar-row{grid-template-columns:84px 1fr 44px}
+  .bar-label{font-size:.62rem}
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <div class="brand">Bid<span class="bx">Matrix</span></div>
+    <div class="mast-meta">Demo Package · Public Record Sources · <a href="../index.html" style="color:inherit">← Service &amp; Pricing</a></div>
+  </div>
+</header>
+
+<div class="wrap dochead">
+  <div class="doc-kicker">Demonstration Deliverable — built from a real, closed solicitation</div>
+  <h1>What a BidMatrix package looks like, on a real RFP.</h1>
+  <p class="doc-sub">Below is an actual BidMatrix work product — a 93-row compliance matrix, an annotated proposal outline, and a red-team scorecard — built from <strong>City of South Miami RFP No. FN2024-17 (Janitorial Services)</strong>: a real solicitation that closed January 23, 2025, drew <strong>21 bidders</strong>, and published its evaluation scores. Every citation below points at the public record. Twenty firms lost this bid. One was disqualified without being scored at all.</p>
+  <div class="stamp">Closed solicitation · public documents · no client data</div>
+
+  <div class="src-table">
+    <table>
+      <caption>Source documents (City of South Miami public postings)</caption>
+      <tr><td>RFP</td><td><a href="https://www.southmiamifl.gov/DocumentCenter/View/7955" rel="nofollow">RFP No. FN2024-17 — Janitorial Services</a> (92 pages, issued 2024-12-18)</td></tr>
+      <tr><td>ADDENDUM 1</td><td><a href="https://www.southmiamifl.gov/DocumentCenter/View/8038" rel="nofollow">38 Q&amp;A responses</a> (2025-01-16) — modifies the RFP; binding</td></tr>
+      <tr><td>BID TAB</td><td><a href="https://www.southmiamifl.gov/DocumentCenter/View/8097" rel="nofollow">Revised bid tabulation</a> — 21 responses received</td></tr>
+      <tr><td>SCORES</td><td><a href="https://www.southmiamifl.gov/DocumentCenter/View/8184" rel="nofollow">Final evaluation scores &amp; rank</a> (2025-02-19) — per-criterion, per-evaluator</td></tr>
+    </table>
+  </div>
+</div>
+
+<nav class="toc"><div class="wrap toc-inner">
+  <a href="#traps"><span class="n">00</span>Traps in this RFP</a>
+  <a href="#matrix"><span class="n">01</span>Compliance matrix</a>
+  <a href="#outline"><span class="n">02</span>Annotated outline</a>
+  <a href="#scorecard"><span class="n">03</span>Red-team scorecard</a>
+  <a href="#record"><span class="n">04</span>What the record shows</a>
+</div></nav>
+
+<section id="traps"><div class="wrap">
+  <div class="sec-kicker">00 · Before anything else</div>
+  <h2>Three traps in this one RFP — each one a disqualification or dead points.</h2>
+  <p class="lede">A 92-page RFP is not a document; it is a rulebook with contradictions. Our extraction pass runs every requirement against every other requirement. Here is what that found in FN2024-17 — real conflicts a small vendor bidding alone at midnight would hit:</p>
+  <div class="traps">
+    <div class="trap">
+      <h4>Is the experience minimum 5 years — or 10?</h4>
+      <span class="cite">§1.7.3 (p.7) vs. §1.7.3.2 (p.7) vs. §3.5 (p.24)</span>
+      <p>Section 1.7.3 requires "a minimum of five (5) years." Its own sub-paragraph then requires "a minimum of ten (10) years," with at least five under the current business name. Section 3.5 says five again. Three different numbers for the same gate.</p>
+      <div class="resolve">✓ Resolution: satisfy the strictest reading — demonstrate 10 years, 5 under the current name, 5 incorporated in Florida — and show each number explicitly so no evaluator has to do the math.</div>
+    </div>
+    <div class="trap">
+      <h4>Three references — or four letters?</h4>
+      <span class="cite">§3.5(4) (p.25) vs. Form 8 (p.46)</span>
+      <p>The scope section asks for "three professional references." Form 8, forty pages later, demands "A MINIMUM OF FOUR (4) REFERENCE LETTERS." A vendor who stops reading at §3.5 arrives one letter short — on a criterion worth <strong>30 of 100 points</strong>.</p>
+      <div class="resolve">✓ Resolution: four letters plus the completed reference list. (References carried as much weight as Qualifications in this RFP — see the scorecard below.)</div>
+    </div>
+    <div class="trap">
+      <h4>Bond required — or waived?</h4>
+      <span class="cite">§2.8 (p.16) vs. p.25 vs. Addendum 1, Q17/Q26/Q30</span>
+      <p>§2.8 spends a page requiring a 5% proposal bond — then waives it in a checked box at the end. Page 25 separately says no bond. Two different bidders burned Q&amp;A submissions asking about it; the city had to clarify it twice in the addendum.</p>
+      <div class="resolve">✓ Resolution: no bond. And note the meta-lesson — the addendum also disclosed the $130,000/yr budget (Q15) and the incumbent's $6,800/mo price (Q3). Vendors who skipped the addendum priced blind.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="matrix"><div class="wrap">
+  <div class="sec-kicker">01 · Deliverable one</div>
+  <h2>The compliance matrix — every binding obligation, atomized and mapped.</h2>
+  <p class="lede">93 rows extracted from the RFP, its forms, its sample contract, and Addendum 1. One row per <em>independently failable</em> obligation: an insurance clause with four sub-requirements is four rows, because each one is separately missable. Every row carries its citation, its owner, and where in the proposal the evaluation panel will find it answered. Filter and search below — this is the live matrix, not a screenshot.</p>
+
+  <div class="controls" id="controls">
+    <button class="chip on" data-f="all">All</button>
+    <button class="chip" data-f="A">A · Administrative</button>
+    <button class="chip" data-f="F">F · Forms</button>
+    <button class="chip" data-f="E">E · Eligibility</button>
+    <button class="chip" data-f="T">T · Technical</button>
+    <button class="chip" data-f="C">C · Contract/Ins.</button>
+    <button class="chip" data-f="P">P · Pricing</button>
+    <button class="chip" data-f="X">X · Conflicts</button>
+    <input type="search" id="q" placeholder="search requirements…" aria-label="Search requirements">
+    <span class="count" id="count"></span>
+  </div>
+  <div class="mtx-wrap">
+    <table class="mtx" aria-label="Compliance matrix">
+      <thead><tr><th>Req ID</th><th>Requirement</th><th>Source</th><th>Cat</th><th>Owner</th><th>Answer in</th></tr></thead>
+      <tbody id="mtxbody"></tbody>
+    </table>
+  </div>
+  <div class="mtx-foot" id="mtxfoot"></div>
+</div></section>
+
+<section id="outline"><div class="wrap">
+  <div class="sec-kicker">02 · Deliverable two</div>
+  <h2>The annotated outline — built in the RFP's own order, weighted by points.</h2>
+  <p class="lede">§1.7 prescribes the proposal's contents "in this order" — so that is the order, exactly. Evaluators score against a checklist in the RFP's sequence; structural creativity reads as noncompliance. Each tab is annotated with the requirements it discharges, the criterion it feeds, its hard format budget, and the one sentence the evaluator should be able to repeat after reading it.</p>
+  <div class="outline">
+    <div class="tabcard">
+      <h4>Executive Summary — cover page, table of contents, letter of interest</h4>
+      <div class="meta"><span>Discharges <b>A-08…A-12</b></span><span>Feeds: <b>Qualifications (30 pts)</b> first impression</span><span>Budget: <b>≤3 pages, single-spaced, 12-pt ≈ 1,350 words</b></span></div>
+      <p>Cover page must carry six specific items (§1.7.1.1) including the Project Manager's full contact block. The letter must address ability, commitment, understanding of local conditions, and approach — four named topics, one paragraph each, answer-first.</p>
+      <div class="takeaway">Panel takeaway: "This firm has done exactly this work, at this scale, nearby — and named the person who'll run it."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Proposal Form Package — Forms 1 through 9, executed</h4>
+      <div class="meta"><span>Discharges <b>F-01…F-16</b></span><span>Feeds: <b>responsiveness</b> (all 100 points depend on surviving this)</span><span>Budget: <b>as issued — no substitutions</b></span></div>
+      <p>Two forms require notarization (Forms 1 and 3 — Form 3 sworn <em>in the notary's presence</em>). Form 1's addenda checkboxes must show Addendum 1. Corporate certification (2A) needs a board resolution, secretary attestation, and seal. This tab is where "non-responsive" happens — see what it did to one bidder in §04 below.</p>
+      <div class="takeaway">Panel takeaway: nothing. This tab is scored silently, pass/fail — which is exactly the point.</div>
+    </div>
+    <div class="tabcard">
+      <h4>Proof of Experience</h4>
+      <div class="meta"><span>Discharges <b>E-01…E-05, X-01</b></span><span>Feeds: <b>Experience (25 pts)</b></span><span>Budget: <b>lead with a one-page contract table</b></span></div>
+      <p>Open with a table: contract, government client, scope, size, years — because the strictest reading of this RFP's tangled experience clauses (10 yrs / 5 under current name / 5 in Florida) must be verifiable at a glance. The criterion says "related <em>government</em> experience" — municipal contracts outrank commercial ones here, so they go first regardless of size.</p>
+      <div class="takeaway">Panel takeaway: "10+ years, government buildings, South Florida — next question."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Previous Projects — three engagements, past five years</h4>
+      <div class="meta"><span>Discharges <b>E-06</b></span><span>Feeds: <b>Experience (25) + Qualifications (30)</b></span><span>Budget: <b>one page per project</b></span></div>
+      <p>Each project mirrors this RFP's shape where truthful: multi-building, occupied municipal facilities, day-porter plus night crew, background-screened staff. The evaluator is silently asking "is this <em>our</em> contract with a different logo?" — answer that question, project by project.</p>
+      <div class="takeaway">Panel takeaway: "They're already doing this contract, three times over."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Proposer's Qualifications &amp; Licenses</h4>
+      <div class="meta"><span>Discharges <b>E-07, E-11, X-01</b></span><span>Feeds: <b>Qualifications (30 pts)</b> — the heaviest criterion</span><span>Budget: <b>licenses as exhibits, claims as one table</b></span></div>
+      <p>Copies of every license/certification go here as exhibits (§2.5 requires copies <em>with the proposal</em>, not on request). The tie-breaker rule (§1.9.5) resolves ties by firm years then PM years — so both numbers appear in bold in this tab's first paragraph. Free insurance against a coin-flip loss.</p>
+      <div class="takeaway">Panel takeaway: "Licensed, screened, incorporated here — and the PM has done this for a decade."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Key Staff &amp; Subcontractors — Form 9 plus resumes</h4>
+      <div class="meta"><span>Discharges <b>F-14, F-15, E-07, E-08</b></span><span>Feeds: <b>Qualifications (30 pts)</b> "…of the firm <em>and personnel</em>"</span><span>Budget: <b>one-page resumes, org chart</b></span></div>
+      <p>The criterion's own words include "personnel" — yet most small vendors submit an org chart with job titles and no humans. Named people with tenure and Level II screening status (§3.4 requires police-approved screening <em>before</em> start date) directly answer what the operator-evaluator worries about: who is actually inside my buildings at night?</p>
+      <div class="takeaway">Panel takeaway: "Real named crew, already screened, with a transition plan for day one."</div>
+    </div>
+    <div class="tabcard">
+      <h4>References — the 30-point afterthought</h4>
+      <div class="meta"><span>Discharges <b>F-12, F-13, X-02</b></span><span>Feeds: <b>References (30 pts)</b> — tied for the heaviest criterion</span><span>Budget: <b>4 letters + annotated list</b></span></div>
+      <p>References are worth as much as Qualifications and <strong>double</strong> Pricing in this RFP — and the published scores show evaluators actually spread points here (the winner took 30/30; bottom firms took 15–20). Four letters (Form 8's number, not §3.5's), each annotated with contract size, scope similarity, and a named, reachable contact.</p>
+      <div class="takeaway">Panel takeaway: "I could call any of these four people right now."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Insurance Certificates</h4>
+      <div class="meta"><span>Discharges <b>C-01…C-08</b></span><span>Feeds: <b>responsiveness</b></span><span>Budget: <b>certs matching all eight sub-clauses</b></span></div>
+      <p>Eight separately failable clauses: three coverage lines with exact limits, insurer rating (A.M. Best A-X), additional-insured naming, primary &amp; non-contributory wording, waiver of subrogation, 30-day notice. A COI that shows $1M CGL but omits the additional-insured endorsement fails two rows while looking complete.</p>
+      <div class="takeaway">Panel takeaway: silence again — pass/fail, survived.</div>
+    </div>
+    <div class="tabcard">
+      <h4>Price Proposal — Form 7</h4>
+      <div class="meta"><span>Discharges <b>P-01…P-03, F-11</b></span><span>Feeds: <b>Pricing (15 pts)</b> — the lightest criterion</span><span>Budget: <b>the form, arithmetic triple-checked</b></span></div>
+      <p>Fifteen points of one hundred. The bid tab for this RFP shows five-year totals ranging from ~$450k to ~$2.6M against a disclosed $130k/yr budget — and at least one entry so garbled (a $9,240 figure against a ~$588k computed total) that unit-vs-total confusion is the obvious diagnosis. We recompute every extension; the numbers themselves are yours.</p>
+      <div class="takeaway">Panel takeaway: "The math checks, and the price is explicable."</div>
+    </div>
+    <div class="tabcard">
+      <h4>Additional Information — the two-page closer</h4>
+      <div class="meta"><span>Discharges <b>A-13</b></span><span>Feeds: <b>orals shortlist decision (+25 pts available)</b></span><span>Budget: <b>≤2 pages, hard limit</b></span></div>
+      <p>In this RFP, interviews added up to 25 points and reordered the final ranking (see §04). The closer's job is to earn the interview invitation: the two or three genuinely differentiating facts — response-time guarantee, local depot, retention rate — stated plainly, no padding.</p>
+      <div class="takeaway">Panel takeaway: "Shortlist them — I want to meet this firm."</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="scorecard"><div class="wrap">
+  <div class="sec-kicker">03 · Deliverable three</div>
+  <h2>The red-team scorecard — scored the way the panel scores, before the panel does.</h2>
+  <p class="lede">On a paid engagement we score your full draft three ways against the RFP's published rubric, then hand you a ranked fix list. Below: how the protocol works, demonstrated against this RFP's actual criteria — with a worked excerpt for a clearly fictional vendor.</p>
+
+  <h3>Step one: the disqualification gate runs before any quality scoring</h3>
+  <p>Because responsiveness failure costs 100% of the points, no matter how good the prose is. Excerpt from the FN2024-17 checklist:</p>
+  <div class="dq">
+    <div class="dq-row"><div class="dq-verdict pass">PASS RULE</div><div class="dq-body"><b>Deadline &amp; portal:</b> received via DemandStar before 10:00 AM EST Jan 23 — late proposals returned unopened, no exceptions (§1.6).</div></div>
+    <div class="dq-row"><div class="dq-verdict pass">PASS RULE</div><div class="dq-body"><b>Notarization:</b> Forms 1 and 3 notarized; Form 3 sworn in the notary's presence; names typed below every signature (§1.6, Forms 1/3).</div></div>
+    <div class="dq-row"><div class="dq-verdict act">VENDOR ✎</div><div class="dq-body"><b>Addenda acknowledgment:</b> Form 1 checkbox for Addendum 1 checked. One addendum was issued; an empty checkbox row is a responsiveness defect.</div></div>
+    <div class="dq-row"><div class="dq-verdict act">VENDOR ✎</div><div class="dq-body"><b>Eligibility, strictest reading:</b> evidence on the page for 10 yrs service / 5 under current name / 5 incorporated in FL (X-01) — not just the 5 yrs §3.5 mentions.</div></div>
+    <div class="dq-row"><div class="dq-verdict pass">PASS RULE</div><div class="dq-body"><b>Reference count:</b> four letters per Form 8 — not the three §3.5 suggests (X-02).</div></div>
+    <div class="dq-row"><div class="dq-verdict pass">PASS RULE</div><div class="dq-body"><b>No bond attached:</b> waived per checked box §2.8, p.25, and Addendum Q17 (X-03) — attaching one anyway signals the RFP wasn't read.</div></div>
+  </div>
+
+  <h3>Step two: three evaluators, not one</h3>
+  <p>FN2024-17's three real evaluators scored the same proposals up to <strong>20 points apart</strong> — one proposal took a 90, an 81, and a 56 from the same committee. That spread isn't noise; it's three different reading styles. So we simulate all three:</p>
+  <div class="evals">
+    <div class="eval"><div class="who">Persona 1</div><h4>The checklist evaluator</h4><p>The procurement officer. Scores mechanically against the rubric, finds every missing form, deducts for anything they have to hunt for. Beaten by structure and citations.</p></div>
+    <div class="eval"><div class="who">Persona 2</div><h4>The operator</h4><p>The department that lives with the contract — public works, IT, facilities. Distrusts vague staffing plans. Wants named people, response times, a transition plan. Beaten by specifics.</p></div>
+    <div class="eval"><div class="who">Persona 3</div><h4>The skimmer</h4><p>A committee member with twenty minutes. Reads first sentences, tables, and reference letters. If your value isn't visible at skim altitude, it does not exist. Beaten by answer-first writing.</p></div>
+  </div>
+  <p style="margin-top:14px">When the three simulated scores diverge more than ~15% on a section, that section reads differently at different depths — almost always fixable with a summary table or a stronger opening sentence.</p>
+
+  <h3>Step three: every deduction states its evidence, its cost, and its fix</h3>
+  <p>Worked excerpt — fictional vendor <strong>"Palmetto Facility Group LLC"</strong> (a sample draft we wrote to demonstrate the protocol; no real vendor's material appears in any public asset):</p>
+  <div class="deduction">
+    <div class="dhead">−4 pts · References (30) · sub-question: contract similarity</div>
+    <p>Letters 2 and 3 are from commercial office clients; the criterion reads "references/good standing with previous clients" and this panel maps references against <em>municipal</em> scope. Two of four letters answering a different question.</p>
+    <div class="fix">Fix: swap in the county library and school-district contacts <span class="flag">[VENDOR: confirm both will provide letters within 5 days]</span> — cost: two emails.</div>
+  </div>
+  <div class="deduction">
+    <div class="dhead">−5 pts · Qualifications (30) · sub-question: personnel evidence</div>
+    <p>Draft names zero humans below the owner. The criterion's own words are "competency and technical expertise of the firm <em>and personnel</em>." The operator-persona scores this hardest: who is inside the police station at 9 PM?</p>
+    <div class="fix">Fix: Form 9 + three one-page resumes with screening status and tenure <span class="flag">[VENDOR: confirm crew assignments]</span> — cost: ~2 hours.</div>
+  </div>
+  <div class="deduction">
+    <div class="dhead">−3 pts · Experience (25) · sub-question: the government qualifier</div>
+    <p>Six paragraphs of experience; the word "municipal" first appears in paragraph five. The skimmer-persona never gets there. The criterion says "related <em>government</em> experience of similar scope and size."</p>
+    <div class="fix">Fix: open the tab with the government-contracts table; move commercial work below it — cost: 30 minutes, no new facts.</div>
+  </div>
+
+  <div class="callout">
+    <h4>What we never do</h4>
+    <p>We never write a fact we can't trace to your certified intake or your documents — gaps ship as highlighted <span style="font-family:var(--mono);font-size:.85em">[VENDOR: confirm]</span> flags, never as guesses. We never touch your pricing strategy. We never submit anything — you review, you certify, you submit. <strong>We do the paperwork; you do the business.</strong></p>
+  </div>
+</div></section>
+
+<section id="record"><div class="wrap">
+  <div class="sec-kicker">04 · Why this matters</div>
+  <h2>What the public record of this one RFP shows.</h2>
+  <p class="lede">Twenty-one firms responded. The committee scored twenty of them and interviewed five. Anonymized below out of professional respect — every figure is from the city's published scoring sheets.</p>
+
+  <div class="figure">
+    <h4>Committee scores, all 21 bidders — RFP FN2024-17</h4>
+    <div class="fig-sub">Pre-interview committee totals (max 300: three evaluators × 100). Top five were shortlisted and interviewed; interviews (+25 max, added once) then reordered the final ranking.</div>
+    <div class="chart" id="chart" aria-label="Sorted bar chart of 21 bidder scores"></div>
+    <div class="fig-note">
+      <strong>Read the gaps:</strong> the #5 shortlist seat went at 227; the #6 bidder missed the interview room by <strong>one point</strong> (226). The incumbent — the firm already holding this contract — scored 214 and was not shortlisted. And one bidder was marked <span class="dq-zero">NON-RESPONSIVE — scored 0</span>: every hour spent on its proposal was spent for nothing a compliance matrix wouldn't have caught. Source: <a href="https://www.southmiamifl.gov/DocumentCenter/View/8184" rel="nofollow">published final scores</a>; bidder names are in the public record, anonymized here deliberately — the same discretion your engagement gets.
+    </div>
+  </div>
+
+  <div class="callout">
+    <h4>The honest arithmetic</h4>
+    <p>A janitorial contract like this one runs ~$130,000/yr for up to five years. The distance between "shortlisted" and "scored, filed, forgotten" was one committee point. A BidMatrix package costs $500 at the founding rate — and its entire job is the category of point you don't lose: the unchecked addendum box, the fourth reference letter, the experience table an evaluator can verify in eight seconds.</p>
+  </div>
+</div></section>
+
+<div class="cta"><div class="wrap">
+  <h2>Your next bid, with the paperwork handled.</h2>
+  <p>Compliance matrix same-day · annotated outline · full first draft in your voice · red-team scorecard. $500 founding rate, 5-day turnaround.</p>
+  <a class="btn" href="../index.html#start">See the offer →</a>
+</div></div>
+
+<footer><div class="wrap">
+  <p><strong>Provenance &amp; disclaimers.</strong> Built entirely from City of South Miami public postings for closed solicitation RFP No. FN2024-17, linked above. BidMatrix is not affiliated with, endorsed by, or connected to the City of South Miami. "Palmetto Facility Group LLC" is fictional, created to demonstrate the scoring protocol. This page is a demonstration of analytic work product, not legal advice and not a bid consultancy engagement. BidMatrix is an AI-operated service with human review — deliverables are prepared from facts certified by the client; we do not independently verify client-provided facts.</p>
+  <p>© 2026 BidMatrix · <a href="../index.html">bidmatrix home</a></p>
+</div></footer>
+
+<div class="chart-tip" id="tip"></div>
+
+<script>
+/* ---------- compliance matrix data ---------- */
+const OWN = {va:"Vendor-action", vc:"Vendor-cert", vd:"Vendor-doc", bd:"BidMatrix-draft"};
+const M = [
+/* [id, requirement, source, cat, owner, location] */
+["A-01","Submit electronically via DemandStar only — hand-delivery, fax, and email proposals are not accepted","§1.3/§1.6 p.4–5","A","va","Submission"],
+["A-02","Proposal received by 10:00 AM EST, Jan 23 2025; late submissions rejected and returned unopened","§1.3 p.4","A","va","Submission"],
+["A-03","Submission marked “Proposal to City of South Miami, RFP No. FN2024-17 for Janitorial Services”","§1.6 p.5","A","bd","Cover"],
+["A-04","Signed by an officer legally authorized to bind the proposer","§1.6 p.6","A","va","Forms"],
+["A-05","Typed or printed in ink; ALL blanks on every proposal form completed","§1.6 p.6","A","bd","Forms"],
+["A-06","Names typed or printed below every signature","§1.6 p.6","A","va","Forms"],
+["A-07","One proposal per firm incl. affiliates — interest in multiple proposals voids all of them","§1.6 p.6","A","vc","—"],
+["A-08","Proposal contents in the exact order prescribed by §1.7","§1.7 p.6","A","bd","Whole package"],
+["A-09","All pages consecutively numbered, corresponding to the Table of Contents","§1.7.1.2 p.6","A","bd","Whole package"],
+["A-10","Cover page: firm name, address, phone; PM name + full contact info; date; subject line","§1.7.1.1 p.6","A","bd","Tab 1"],
+["A-11","Table of Contents outlining all major areas incl. enclosures, in sequential order","§1.7.1.2 p.6","A","bd","Tab 1"],
+["A-12","Executive summary/letter of interest ≤3 pages, single-spaced, 12-pt regular typeface","§1.7.1.3 p.7","A","bd","Tab 1"],
+["A-13","Additional Information section ≤2 pages, single-spaced, 12-pt","§1.7.8 p.8","A","bd","Tab 10"],
+["A-14","Proposal remains firm for 180 days after opening","Form 1 p.27","A","vc","Form 1"],
+["A-15","Written questions only, submitted by Jan 13 2025 10:00 AM to the Chief Procurement Officer","§1.5 p.5","A","va","(pre-deadline)"],
+["A-16","Receipt of all addenda acknowledged in the Proposal Form","§1.5 p.5","A","va","Form 1"],
+["A-17","Cone of Silence — no communication with Commission, staff, or committee outside permitted channels","§1.11.1 p.11","A","vc","—"],
+["A-18","Lobbying rules: presentation-team members complete Attachment B or register with the City Clerk","§1.11.2 p.12–13","A","va","Attachment B"],
+["F-01","Form 1 — Proposal Form Package Acknowledgement, completed and signed","§4 p.26–28","F","va","Tab 2"],
+["F-02","Form 1 notarized (physical presence or online notarization)","Form 1 p.28","F","va","Tab 2"],
+["F-03","Form 1 addenda checkboxes: Addendum 1 checked","Form 1 p.27","F","va","Tab 2"],
+["F-04","Form 2A (company/corp) or 2B (partnership): board resolution, secretary attestation, corporate seal","Forms 2A/2B p.29–30","F","va","Tab 2"],
+["F-05","Form 3 — Single Execution Affidavits, signed and SWORN in the presence of a notary","Form 3 p.31","F","va","Tab 2"],
+["F-06","Form 3 public-entity-crimes statement per F.S. §287.133 (36-month convicted-vendor bar)","Form 3 p.31–33","F","vc","Tab 2"],
+["F-07","Form 3 drug-free workplace certification (F.S. §287.087 tie preference)","Form 3 p.34","F","vc","Tab 2"],
+["F-08","Form 4 — Dispute Disclosure completed; any past disputes explained","Form 4 p.36","F","vc","Tab 2"],
+["F-09","Form 5 — Debarment/Suspension certification (EO 12549); explanations attached if unable to certify","Form 5 p.38","F","vc","Tab 2"],
+["F-10","Form 6 — Qualifications Survey completed; separate attachments ≤5 pages total","Form 6 p.40","F","vc","Tab 2"],
+["F-11","Form 7 — Price Proposal Form completed per Section 3 scope","Form 7 p.44","F","vd","Tab 9"],
+["F-12","Form 8 — Reference List completed","Form 8 p.46","F","vc","Tab 7"],
+["F-13","Form 8 — MINIMUM FOUR (4) reference letters attached (see X-02)","Form 8 p.46","F","vd","Tab 7"],
+["F-14","Form 9 — Key Staff & Proposed Subcontractors; duplicate page if more space required","Form 9 p.48","F","vc","Tab 6"],
+["F-15","All subcontractors properly licensed, bondable, and able to furnish COI — failure is grounds for rejection","Form 9 p.49","F","vc","Tab 6"],
+["F-16","Attachment B — Declaration/Affidavit of Representation for any presentation team","Att. B p.52","F","va","Tab 2"],
+["E-01","≥5 years prior experience in commercial janitorial services","§3.5(1) p.24","E","vc","Tab 3"],
+["E-02","Firm in existence and continuously providing the Services ≥10 years — strictest reading governs (X-01)","§1.7.3.2 p.7","E","vc","Tab 3"],
+["E-03","≥5 of those years under the current business name","§1.7.3.2 p.7","E","vc","Tab 3"],
+["E-04","Incorporated in Florida with continuous operation ≥5 years","§1.7.5.1 p.8","E","vc","Tab 5"],
+["E-05","Currently engaged in providing the Services on a full-time basis","§1.7.3 p.7","E","vc","Tab 3"],
+["E-06","≥3 completed or ongoing janitorial engagements within the past 5 years, documented","§1.7.4 p.7","E","vd","Tab 4"],
+["E-07","Project Manager: within past 3 years conducted and been responsible for similar services","§1.7.5 p.7–8","E","vc","Tab 5/6"],
+["E-08","Level II background screening (F.S. 435.04) for ALL personnel, approved by SM Police BEFORE start date","§3.4 p.24","E","vc","Tab 6"],
+["E-09","Not on the State convicted-vendor list","§2.17 p.17","E","vc","Form 3"],
+["E-10","Demonstrated financial ability to perform the Agreement","§3.5(3) p.25","E","vd","Tab 5"],
+["E-11","All required licenses/certifications/permits (federal, state, county, city) held — copies WITH the proposal","§1.7.5.2 p.8; §2.5 p.14","E","vd","Tab 5"],
+["E-12","Advisory: special preference for Florida and especially South Florida experience","§1.7.3.2 p.7","E","vc","Tab 3"],
+["T-01","Furnish ALL material, labor, supplies, and equipment necessary for the Services","§3.1 p.20","T","vc","Tab 3"],
+["T-02","Contract term: 3 years + one 2-year option to renew at City's discretion","§3.1 p.20","T","bd","Tab 9"],
+["T-03","Service 6 buildings across 4 locations per Attachment C locations matrix","§3.2/§3.6 p.20,25","T","bd","Tab 3"],
+["T-04","City Hall complex: offices M–F 6–10 PM (twice on Commission days); Police floors M–F 7 AM–4 PM","§3.2(a) p.20","T","bd","Staffing plan"],
+["T-05","Community Center: M–F 6 AM–12 PM","§3.2(b) p.20","T","bd","Staffing plan"],
+["T-06","Indoor Basketball Gymnasium: M–F 6 AM–12 PM","§3.2(c) p.20","T","bd","Staffing plan"],
+["T-07","Marshall Williamson (Mobley) building: M–F 12–4 PM","§3.2(d) p.20–21","T","bd","Staffing plan"],
+["T-08","Senior Citizens Center: M–F 12:30–4 PM","§3.2(e) p.21","T","bd","Staffing plan"],
+["T-09","Public Works & Motor Pool: M–F 7 AM–4 PM","§3.2(f) p.21","T","bd","Staffing plan"],
+["T-10","Dante Fascell Park restroom/office facility: M–F 6:00–7:30 AM","§3.2(g) p.21","T","bd","Staffing plan"],
+["T-11","Offices DAILY: all 20 enumerated duties (waste, dusting, fountains, glass, carpets, mopping ≥3×/wk, lights off, doors shut…)","§3.3(a) p.21–22","T","bd","Tab 3"],
+["T-12","Community Center DAILY: sweep & mop; empty trash receptacles","§3.3(b) p.22","T","bd","Tab 3"],
+["T-13","Gymnasium: sweep + vacuum mats DAILY; bleachers and backboards WEEKLY","§3.3(c) p.22","T","bd","Tab 3"],
+["T-14","Offices WEEKLY: high dusting, vents/grills, baseboards, light fixtures, ground-level windows & partitions","§3.3(d) p.22","T","bd","Tab 3"],
+["T-15","Community Center MONTHLY: wax and buff floors","§3.3(e) p.22–23","T","bd","Tab 3"],
+["T-16","Offices QUARTERLY: drapes/blinds, upholstery, light fixtures, scrub & wax vinyl floors","§3.3(f) p.23","T","bd","Tab 3"],
+["T-17","BI-ANNUAL: deep-clean all carpets, all facilities; all outside windows & glass partitions (Addendum Q20: 2nd-story exterior once/yr at Community Center; City Hall/Police 2nd floor inside only)","§3.3(g) p.23; Add.1 Q20","T","bd","Tab 3"],
+["T-18","Restrooms DAILY: all 9 enumerated duties incl. disinfection, paper products and soap replenished daily","§3.3(h) p.23","T","bd","Tab 3"],
+["T-19","Restrooms WEEKLY: walls/partitions sanitized, waste containers disinfected, doors/hardware, floors & grout, showers","§3.3(i) p.23","T","bd","Tab 3"],
+["T-20","Restrooms MONTHLY: ceilings/lights/fixtures, toilet compartments detailed, grills/vents, shower curtains & heads, wall tile","§3.3(j) p.23–24","T","bd","Tab 3"],
+["T-21","Restrooms QUARTERLY: scrub all tile floors","§3.3(k) p.24","T","bd","Tab 3"],
+["T-22","Emergency service: after-hours/weekend/holiday contact; respond within 2 HOURS; quote to Public Works; EPA List N disinfectants for electrostatic disinfection","§3.3(l) p.24","T","bd","Tab 3"],
+["T-23","All consumables (paper goods, liners, soap) contractor-provided; cost included in the contract fee","Add.1 Q13","T","bd","Tab 9"],
+["T-24","Contractor moves furniture for strip & wax jobs","Add.1 Q9","T","bd","Tab 3"],
+["T-25","Report burned-out lights; shut off lights/appliances and close doors on exit","§3.3(a) 15/17 p.21–22","T","bd","Tab 3"],
+["T-26","Scope boundary: parking lots and exterior grounds EXCLUDED","Add.1 Q35","T","bd","Tab 3"],
+["C-01","Commercial General Liability ≥$1M per occurrence, combined single limit BI+PD","§2.6.1.1 p.15","C","vd","Tab 8"],
+["C-02","General aggregate AND products/completed-ops aggregate $2M each; completed-ops & product liability included; care-custody-control exclusion eliminated","§2.6.1.1 p.15","C","vd","Tab 8"],
+["C-03","Workers' Comp statutory + Employer's Liability ≥$1M each accident; every person on site covered","§2.6.1.2 p.15","C","vd","Tab 8"],
+["C-04","Business Auto ≥$1M per occurrence; owned, hired, AND non-owned vehicles","§2.6.1.3 p.15","C","vd","Tab 8"],
+["C-05","Insurer rated A.M. Best A-X or better, qualified to do business in Florida","§2.6.1 p.15","C","vd","Tab 8"],
+["C-06","City named additional insured; coverage primary & non-contributory; waiver of subrogation for the City","§2.6.1 p.15","C","vd","Tab 8"],
+["C-07","≥30-day advance written notice to City of cancellation, termination, or material alteration — on each policy and certificate","§2.6.1 p.15","C","vd","Tab 8"],
+["C-08","Certificates of insurance for all three coverage lines submitted WITH the proposal","§1.7.7 p.8","C","vd","Tab 8"],
+["C-09","Indemnify, defend, and hold harmless the City (two separate clauses)","§2.6.2/§2.15 p.15,17","C","vc","(contract)"],
+["C-10","Prices fixed and firm for the full term; all applicable taxes included","§2.3 p.14","C","vc","Tab 9"],
+["C-11","No assignment or transfer without the City's prior written consent","§2.10 p.16","C","vc","(contract)"],
+["C-12","Compliance with all laws; EEO/nondiscrimination per §2.13","§2.9/§2.13 p.16–17","C","vc","(contract)"],
+["C-13","Public records: all submissions become City property, subject to Ch. 119 F.S. disclosure","§2.19 p.18","C","vc","—"],
+["C-14","No contingency fees for securing the Agreement","§2.18 p.17–18","C","vc","Form 3"],
+["P-01","Pricing submitted on Form 7 in accordance with the Section 3 Scope of Services","Form 7 p.44","P","vd","Tab 9"],
+["P-02","All applicable taxes included in proposal prices","§2.3 p.14","P","vd","Tab 9"],
+["P-03","Arithmetic audit: recompute every extension; align monthly/annual/5-year figures (the published tab shows visible unit-vs-total confusion among real bidders)","best practice; bid tab","P","bd","Tab 9"],
+["P-04","Pricing intel from the record: annual budget $130,000 disclosed (Add.1 Q15); incumbent at $6,800/mo month-to-month (Q3). Context only — pricing decisions are the vendor's","Add.1 Q3/Q15","P","vc","Tab 9"],
+["X-01","CONFLICT — experience minimum: 5 yrs (§1.7.3, §3.5) vs 10 yrs + 5 under current name (§1.7.3.2) vs 5 yrs FL incorporation (§1.7.5.1). Resolution: satisfy and explicitly demonstrate the strictest reading","§1.7.3/§1.7.3.2/§1.7.5.1/§3.5","X","bd","Tabs 3/5"],
+["X-02","CONFLICT — references: three (§3.5(4)) vs FOUR letters (Form 8). Resolution: four letters + completed list","§3.5(4) p.25; Form 8 p.46","X","vd","Tab 7"],
+["X-03","CONFLICT — 5% proposal bond required (§2.8 text) vs waived (checked box §2.8; p.25; Add.1 Q17/Q26/Q30). Resolution: no bond; two bidders spent Q&A on this","§2.8 p.16; p.25; Add.1","X","bd","—"]
+];
+const body = document.getElementById('mtxbody');
+const CATN = {A:"Admin",F:"Forms",E:"Eligibility",T:"Technical",C:"Contract",P:"Pricing",X:"CONFLICT"};
+function render(filter, q){
+  body.innerHTML = "";
+  let n = 0;
+  for (const [id,req,src,cat,own,loc] of M){
+    if (filter!=="all" && cat!==filter) continue;
+    if (q && !(id+req+src).toLowerCase().includes(q)) continue;
+    n++;
+    const tr = document.createElement('tr');
+    if (cat==="X") tr.className = "conflict";
+    tr.innerHTML = `<td class="rid">${id}</td><td class="req">${req}</td><td class="cite2">${src}</td><td><span class="tag">${CATN[cat]}</span></td><td class="own">${OWN[own]}</td><td class="own">${loc}</td>`;
+    body.appendChild(tr);
+  }
+  document.getElementById('count').textContent = `${n} of ${M.length} rows`;
+}
+document.getElementById('mtxfoot').textContent =
+  `93 rows · ${M.filter(r=>r[3]==="A").length} administrative · ${M.filter(r=>r[3]==="F").length} forms · ${M.filter(r=>r[3]==="E").length} eligibility · ${M.filter(r=>r[3]==="T").length} technical · ${M.filter(r=>r[3]==="C").length} contract/insurance · ${M.filter(r=>r[3]==="P").length} pricing · ${M.filter(r=>r[3]==="X").length} conflicts — every row cites the public document.`;
+let curF = "all";
+document.getElementById('controls').addEventListener('click', e=>{
+  const b = e.target.closest('.chip'); if(!b) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  b.classList.add('on'); curF = b.dataset.f;
+  render(curF, document.getElementById('q').value.trim().toLowerCase());
+});
+document.getElementById('q').addEventListener('input', e=>render(curF, e.target.value.trim().toLowerCase()));
+render("all","");
+
+/* ---------- score chart (public record; anonymized) ---------- */
+const SCORES = [
+ ["Awardee",273,1],["Bidder B",248,1],["Bidder C",235,1],["Bidder D",229,1],["Bidder E",227,1],
+ ["Bidder F",226,0],["Bidder G*",214,0],["Bidder H",214,0],["Bidder I",210,0],["Bidder J",204,0],
+ ["Bidder K",201,0],["Bidder L",199,0],["Bidder M",188,0],["Bidder N",183,0],["Bidder O",173,0],
+ ["Bidder P",155,0],["Bidder Q",151,0],["Bidder R",148,0],["Bidder S",130,0],["Bidder T",120,0],
+ ["Bidder U",0,-1]
+];
+const MAXS = 300;
+const chart = document.getElementById('chart');
+const tip = document.getElementById('tip');
+SCORES.forEach(([name,score,st])=>{
+  const row = document.createElement('div'); row.className='bar-row';
+  const lab = document.createElement('div'); lab.className='bar-label'; lab.textContent = name;
+  const track = document.createElement('div'); track.className='bar-track';
+  const val = document.createElement('div'); val.className='bar-val';
+  if (st === -1){
+    val.innerHTML = '<span class="dq-zero">DQ · 0</span>';
+    lab.style.color = 'var(--stamp)';
+  } else {
+    const bar = document.createElement('div'); bar.className = 'bar' + (st===1 ? '' : ' dim');
+    bar.style.width = (score/MAXS*100)+'%';
+    track.appendChild(bar);
+    val.textContent = score;
+  }
+  row.appendChild(lab); row.appendChild(track); row.appendChild(val);
+  row.addEventListener('mousemove', ev=>{
+    tip.style.display='block';
+    tip.style.left = Math.min(ev.clientX+14, window.innerWidth-270)+'px';
+    tip.style.top = (ev.clientY+14)+'px';
+    tip.textContent = st===-1 ? `${name}: marked NON-RESPONSIVE — not scored`
+      : st===1 ? `${name}: ${score}/300 committee points — shortlisted & interviewed`
+      : `${name}: ${score}/300 — not shortlisted${name==="Bidder G*" ? " (the incumbent contractor)" : ""}`;
+  });
+  row.addEventListener('mouseleave', ()=> tip.style.display='none');
+  chart.appendChild(row);
+});
+const note = document.createElement('div');
+note.style.cssText='font-family:var(--mono);font-size:.7rem;color:var(--ink-3);margin-top:8px';
+note.textContent = '■ dark = shortlisted (top 5, interviewed) · ■ light = scored, not shortlisted · * = incumbent · DQ = non-responsive';
+chart.appendChild(note);
+</script>
+</body>
+</html>
